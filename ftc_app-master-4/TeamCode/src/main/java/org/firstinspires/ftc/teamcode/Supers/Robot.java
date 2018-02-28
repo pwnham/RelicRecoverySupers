@@ -14,6 +14,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.vuforia.Image;
@@ -59,7 +60,7 @@ public class Robot extends OpMode {
 
     Handler handler;
 
-    public DcMotor leftBack, leftFront, rightFront, rightBack, slideLeft, slideRight, intakeRight, intakeLeft;
+    public DcMotorEx leftBack, leftFront, rightFront, rightBack, slideLeft, slideRight, intakeRight, intakeLeft;
     public Servo flipLeft, flipRight, relicFlipper, relicGrabber, jewelArm, jewelTurn;
     public CRServo relic1, relic2, relic3, relic4;
 
@@ -89,8 +90,8 @@ public class Robot extends OpMode {
     public double jewelTurnFront = .05;
     public double jewelTurnBack = .45;
     public double relicFlipperDown = .225;
-    public double relicFlipperMid = .47;
-    public double relicFlipperUp = .675;
+    public double relicFlipperMid = .53;
+    public double relicFlipperUp = .8;
     public double relicGrabberIn = .6;
     public double relicGrabberOut = .1;
     public double relicGrabberCurrent;
@@ -134,14 +135,14 @@ public class Robot extends OpMode {
 
     @Override
     public void init() {
-        leftBack = hardwareMap.dcMotor.get("leftBack");
-        rightBack = hardwareMap.dcMotor.get("rightBack");
-        rightFront = hardwareMap.dcMotor.get("rightFront");
-        leftFront = hardwareMap.dcMotor.get("leftFront");
-        slideLeft = hardwareMap.dcMotor.get("slideLeft");
-        slideRight = hardwareMap.dcMotor.get("slideRight");
-        intakeLeft = hardwareMap.dcMotor.get("intakeLeft");
-        intakeRight = hardwareMap.dcMotor.get("intakeRight");
+        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("leftBack");
+        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("rightBack");
+        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("rightFront");
+        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("leftFront");
+        slideLeft = (DcMotorEx) hardwareMap.dcMotor.get("slideLeft");
+        slideRight = (DcMotorEx) hardwareMap.dcMotor.get("slideRight");
+        intakeLeft = (DcMotorEx) hardwareMap.dcMotor.get("intakeLeft");
+        intakeRight = (DcMotorEx) hardwareMap.dcMotor.get("intakeRight");
 
         flipLeft = hardwareMap.servo.get("flipLeft");
         flipRight = hardwareMap.servo.get("flipRight");
@@ -161,12 +162,12 @@ public class Robot extends OpMode {
 //        slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

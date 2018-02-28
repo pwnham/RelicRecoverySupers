@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Supers;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by moham on 1/26/18.
@@ -9,9 +10,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class TeleOpTwoPlayer extends Robot {
 
     private double drivePower, driveTurn;
+    private double motorMaxSpeed = 1800 ;
     private RelicFlipperState relicFlipperState = RelicFlipperState.Down;
     private RelicGrabberState relicGrabberState = RelicGrabberState.In;
     private long startTime;
+    private boolean decelerating = false; //put in ROBOT
 
     @Override
     public void init(){
@@ -29,7 +32,13 @@ public class TeleOpTwoPlayer extends Robot {
             rightFront.setPower(-(drivePower + 1.5*driveTurn) * .3);
             leftBack.setPower(-(drivePower - 1.5*driveTurn) * .3);
             leftFront.setPower(-(drivePower - 1.5*driveTurn) * .3);
-        } else {
+        } else if (drivePower <= .1 && drivePower >= -.1 && driveTurn <= .1 && driveTurn >= -.1) { //CASTED ALL DC MOTORS AD DCMOTOREX IN Robot CLASS
+            rightBack.setPower(-Range.clip(rightBack.getPower() - .02, 0, motorMaxSpeed));
+            leftBack.setPower(-Range.clip(leftBack.getPower() - .02, 0, motorMaxSpeed));
+            leftFront.setPower(-Range.clip(leftFront.getPower() - .02, 0, motorMaxSpeed));
+            rightFront.setPower(-Range.clip(rightFront.getPower() - .02, 0, motorMaxSpeed));
+            telemetry.addData("Decelerating",rightBack.getPower());
+        }else {
             rightBack.setPower(-(drivePower + driveTurn));
             rightFront.setPower(-(drivePower + driveTurn));
             leftBack.setPower(-(drivePower - driveTurn));
@@ -40,6 +49,7 @@ public class TeleOpTwoPlayer extends Robot {
 //-------------------------------------------------------------------
 //THIS IS WHERE WE NEED THE DECELERATION THING PLZ
 //-------------------------------------------------------------------
+
 
         //intake in
         if (gamepad2.a) {

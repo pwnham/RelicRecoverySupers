@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Supers.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Supers.Robot;
@@ -16,14 +17,14 @@ public class StraightDriveNoEncoder extends Robot {
 
     @Override
     public void init() {
-        leftBack = hardwareMap.dcMotor.get("leftBack");
-        rightBack = hardwareMap.dcMotor.get("rightBack");
-        rightFront = hardwareMap.dcMotor.get("rightFront");
-        leftFront = hardwareMap.dcMotor.get("leftFront");
-        slideLeft = hardwareMap.dcMotor.get("slideLeft");
-        slideRight = hardwareMap.dcMotor.get("slideRight");
-        intakeLeft = hardwareMap.dcMotor.get("intakeLeft");
-        intakeRight = hardwareMap.dcMotor.get("intakeRight");
+        leftBack = (DcMotorEx) hardwareMap.dcMotor.get("leftBack");
+        rightBack = (DcMotorEx) hardwareMap.dcMotor.get("rightBack");
+        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("rightFront");
+        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("leftFront");
+        slideLeft = (DcMotorEx) hardwareMap.dcMotor.get("slideLeft");
+        slideRight = (DcMotorEx) hardwareMap.dcMotor.get("slideRight");
+        intakeLeft = (DcMotorEx) hardwareMap.dcMotor.get("intakeLeft");
+        intakeRight = (DcMotorEx) hardwareMap.dcMotor.get("intakeRight");
 
         flipLeft = hardwareMap.servo.get("flipLeft");
         flipRight = hardwareMap.servo.get("flipRight");
