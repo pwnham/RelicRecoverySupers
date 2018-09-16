@@ -39,10 +39,10 @@ import java.util.Arrays;
  * Created by moham on 1/27/18.
  */
 @Autonomous
-public class BlueSideMultiAuto extends Robot {
+public class RedSideMultiAuto extends Robot {
 
     private enum RobotState {//list states here
-        DetectJewel, DeployArm, Done, LiftArm, DriveForward, KnockJewel, TurnBack, TurnToCrypto, DriveToCrypto, LiftFlipper, DriveAwayFromCrypto, NudgeGlyph, IntakeAgain, LowerFlipper, Park, DriveBackFromIntakeAgain, LiftFlipperAgain, TurnAfterIntake, FinalPark, BackOutABit, FinalPush, FinalTurn, LowerFlipperAgain, ForwardFromTap, BackOutForTap, Wait
+        DetectJewel, DeployArm, Done, LiftArm, DriveForward, KnockJewel, TurnBack, TurnToCrypto, DriveToCrypto, LiftFlipper, DriveAwayFromCrypto, NudgeGlyph, IntakeAgain, LowerFlipper, Park, DriveBackFromIntakeAgain, LiftFlipperAgain, TurnAfterIntake, FinalPark, BackOutABit, FinalPush, FinalTurn, LowerFlipperAgain, BackOutForTap, ForwardFromTap, Wait
     }
 
     private RobotState robotState=RobotState.DetectJewel;//initialize start state here
@@ -188,10 +188,10 @@ public class BlueSideMultiAuto extends Robot {
                     resetPosition=false;
                 }
                 telemetry.addData("Left Jewel Color", jewelColor);
-                if (jewelColor == "BLUE") {
-                    jewelTurn.setPosition(jewelTurnBack  + .35);
-                } else if (jewelColor == "RED") {
-                    jewelTurn.setPosition(jewelTurnFront);
+                if (jewelColor == "RED") {
+                    jewelTurn.setPosition(jewelTurnBack);
+                } else if (jewelColor == "BLUE") {
+                    jewelTurn.setPosition(jewelTurnFront - .14);
                 }
                 if (System.currentTimeMillis() - startTime > 1000) {
                     robotState = RobotState.LiftArm;
@@ -259,7 +259,7 @@ public class BlueSideMultiAuto extends Robot {
                 }
                 telemetry.addData("Left Jewel Color", jewelColor);
                 jewelArm.setPosition(jewelArmUp);
-                if (System.currentTimeMillis() - startTime > 1000) {
+                if (System.currentTimeMillis() - startTime > 700) {
                     robotState = RobotState.TurnBack;
                     resetPosition = true;
                 }
@@ -271,7 +271,7 @@ public class BlueSideMultiAuto extends Robot {
                 }
                 telemetry.addData("Left Jewel Color", jewelColor);
                 jewelTurn.setPosition(jewelTurnCenter);
-                if (System.currentTimeMillis() - startTime > 1000) {
+                if (System.currentTimeMillis() - startTime > 700) {
                     robotState = RobotState.DriveForward;
                     resetPosition = true;
                 }
@@ -338,25 +338,25 @@ public class BlueSideMultiAuto extends Robot {
                     setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
                     if (columnKey == "CENTER") {
-                        leftBack.setTargetPosition(-1455);
-                        leftFront.setTargetPosition(-1455);
-                        rightBack.setTargetPosition(-1455);
-                        rightFront.setTargetPosition(-1455);
-                    } else if (columnKey == "RIGHT") {
-                        leftBack.setTargetPosition(-1800);
-                        leftFront.setTargetPosition(-1800);
-                        rightBack.setTargetPosition(-1800);
-                        rightFront.setTargetPosition(-1800);
-                    } else if (columnKey =="LEFT") {
-                        leftBack.setTargetPosition(-1200);
-                        leftFront.setTargetPosition(-1200);
-                        rightBack.setTargetPosition(-1200);
-                        rightFront.setTargetPosition(-1200);
+                        leftBack.setTargetPosition(1485);
+                        leftFront.setTargetPosition(1485);
+                        rightBack.setTargetPosition(1485);
+                        rightFront.setTargetPosition(1485);
+                    } else if (columnKey == "LEFT") {
+                        leftBack.setTargetPosition(1835);
+                        leftFront.setTargetPosition(1835);
+                        rightBack.setTargetPosition(1835);
+                        rightFront.setTargetPosition(1835);
+                    } else if (columnKey =="RIGHT") {
+                        leftBack.setTargetPosition(1170);
+                        leftFront.setTargetPosition(1170);
+                        rightBack.setTargetPosition(1170);
+                        rightFront.setTargetPosition(1170);
                     } else {
-                        leftBack.setTargetPosition(-1455);
-                        leftFront.setTargetPosition(-1455);
-                        rightBack.setTargetPosition(-1455);
-                        rightFront.setTargetPosition(-1455);
+                        leftBack.setTargetPosition(1500);
+                        leftFront.setTargetPosition(1500);
+                        rightBack.setTargetPosition(1500);
+                        rightFront.setTargetPosition(1500);
                     }
 
                     setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -730,8 +730,6 @@ public class BlueSideMultiAuto extends Robot {
             case DriveBackFromIntakeAgain:
                 if (resetPosition) {
                     startTime = System.currentTimeMillis();
-                    flipLeft.setPosition(flipLeftMiddle);
-                    flipRight.setPosition(flipRightMiddle);
                     resetPosition = false;
 
                     setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -773,6 +771,10 @@ public class BlueSideMultiAuto extends Robot {
                 } else if (System.currentTimeMillis() - startTime > 250 && System.currentTimeMillis() - startTime < 1000) {
                     intakeLeft.setPower(1);
                     intakeRight.setPower(1);
+                    if (System.currentTimeMillis() - startTime > 500) {
+                        flipLeft.setPosition(flipLeftMiddle);
+                        flipRight.setPosition(flipRightMiddle);
+                    }
                 } else {
                     intakeLeft.setPower(0);
                     intakeRight.setPower(0);
@@ -951,7 +953,7 @@ public class BlueSideMultiAuto extends Robot {
         telemetry.addData("intakeLeft", intakeLeft.getVelocity(AngleUnit.DEGREES));
         telemetry.addData("intakeRight", intakeRight.getVelocity(AngleUnit.DEGREES));
 
-        return true;
+         return true;
     }
 
     @Override

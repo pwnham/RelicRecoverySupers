@@ -72,28 +72,29 @@ public class Robot extends OpMode {
     public BNO055IMU.Parameters imuparameters;
 
     public boolean resetPosition = true;
+    public boolean resetIntake = true;
     public boolean reset = false;
     public boolean resetPositionJewel = true;
     public static final int ENCODER_TICKS_PER_CM = 17 ; //  538/(10 * Math.PI) = 17.1337579618
     public int targetTicks;
     public double PID_P = .003;
     public double flipRightUp = .95;
-    public double flipRightDown = .3;
-    public double flipRightMiddle = .45;
+    public double flipRightDown = .35;
+    public double flipRightMiddle = .5;
     public double flipLeftUp = .05;
-    public double flipLeftDown = .7 ;
-    public double flipLeftMiddle = .55 ;
-    public double jewelArmUp = .275;
-    public double jewelArmIn = .01;
+    public double flipLeftDown = .65 ;
+    public double flipLeftMiddle = .5 ;
+    public double jewelArmUp = .279;
+    public double jewelArmIn = .05;
     public double jewelArmDown = .99;
-    public double jewelTurnCenter = .24;
-    public double jewelTurnFront = .05;
-    public double jewelTurnBack = .45;
-    public double relicFlipperDown = .225;
-    public double relicFlipperMid = .53;
-    public double relicFlipperUp = .8;
-    public double relicGrabberIn = .6;
-    public double relicGrabberOut = .1;
+    public double jewelTurnCenter = .30;
+    public double jewelTurnFront = .21;
+    public double jewelTurnBack = .44;
+    public double relicFlipperDown = .15;
+    public double relicFlipperMid = .315;
+    public double relicFlipperUp = .68;
+    public double relicGrabberIn = .55;
+    public double relicGrabberOut = .2;
     public double relicGrabberCurrent;
 
     public boolean relicGrabberOuting = false;
@@ -103,9 +104,22 @@ public class Robot extends OpMode {
     public String columnKey = "LEFT";
     public boolean detected = false;
     public boolean gyroInitialized = false;
-    public double startAngle;
 
-    public boolean isDriving = false;
+    public boolean armLifted = false;
+    public double startOuting;
+
+    public boolean relicFlipperMidding = false;
+    public double startMidding;
+
+    public int slideState = 0;
+    public int intakeState = 0;
+
+    private double time = .01, lastTime=.01, lastLastTime = .01;
+    private int countA = 1, lastCountA=1, lastLastCountA=1, countB = 1, lastCountB=1, lastLastCountB=1;
+    private double velocityA, velocityB;
+    private double[] velocities;
+
+    public float startAngle;
 
     public enum RelicGrabberState {
         In, Out
@@ -160,7 +174,7 @@ public class Robot extends OpMode {
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         slideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 //        slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -168,11 +182,25 @@ public class Robot extends OpMode {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        slideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         flipLeft.setPosition(flipLeftDown);
         flipRight.setPosition(flipRightDown);
@@ -374,5 +402,33 @@ public class Robot extends OpMode {
 
     String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+    }
+
+    public double[] getVelocity(DcMotorEx motorA, DcMotorEx motorB) {
+        lastLastTime = lastTime;
+        lastTime = time;
+        time = (double) System.currentTimeMillis()/1000;
+
+        lastLastCountA = lastCountA;
+        lastCountA = countA;
+        countA = motorA.getCurrentPosition();
+
+        lastLastCountB = lastCountB;
+        lastCountB = countB;
+        countB =  motorB.getCurrentPosition();
+
+        velocityA = ((double) countA - lastLastCountA) / (time - lastLastTime);
+        velocityB = ((double) countB - lastLastCountB) / (time - lastLastTime);
+
+        velocities = new double[]{velocityA, velocityB};
+
+        return velocities;
+    }
+
+    public void setMode(DcMotor.RunMode runMode) {
+        leftBack.setMode(runMode);
+        rightBack.setMode(runMode);
+        rightFront.setMode(runMode);
+        leftFront.setMode(runMode);
     }
 }

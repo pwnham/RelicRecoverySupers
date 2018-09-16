@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Supers.Auto;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.vuforia.Image;
 import com.vuforia.Matrix34F;
@@ -29,18 +28,19 @@ import org.opencv.imgproc.Imgproc;
 import java.util.Arrays;
 
 /**
- * Created by moham on 1/27/18.
+ * Created by moham on 3/6/18.
  */
-@Autonomous
-public class BlueSideCornerAuto extends Robot {
+
+public class RedSideCornerMultiAuto extends Robot {
 
     private enum RobotState {//list states here
-        DetectJewel, DeployArm, Done, LiftArm, DriveForward, KnockJewel, TurnBack, TurnToCrypto, DriveToCrypto, LiftFlipper, DriveAwayFromCrypto, NudgeGlyph, IntakeAgain, LowerFlipper, Park, TurnToKey, OuttakeGlyph, TurnLeft, Wait
+        DetectJewel, DeployArm, Done, LiftArm, DriveForward, KnockJewel, TurnBack, DriveToCrypto, LiftFlipper, DriveAwayFromCrypto, NudgeGlyph, IntakeAgain, LowerFlipper, Park, TurnToKey, OuttakeGlyph, TurnToGlyphs, DriveToGlyphs, DriveAwayFromCrypto2, TurnToCrypto, DriveToCrypto2,  Wait
     }
 
-    private RobotState robotState=RobotState.DetectJewel;//initialize start state here
+    private RobotState robotState= RobotState.DetectJewel;//initialize start state here
 
     private long startTime;
+    private int version = 1;
 
 
     @Override
@@ -51,7 +51,6 @@ public class BlueSideCornerAuto extends Robot {
 
     @Override
     public void loop() {
-        telemetry.addData("state", robotState.toString());
         switch(robotState) {
             case DetectJewel:
                 if(resetPositionJewel){
@@ -60,7 +59,6 @@ public class BlueSideCornerAuto extends Robot {
                 }
                 if (System.currentTimeMillis() - startTime > 10000) {
                     columnKey = "CENTER";
-                    jewelArm.setPosition(jewelArmUp);
                     robotState = RobotState.TurnToKey;
                     resetPosition = true;
                 }
@@ -163,9 +161,9 @@ public class BlueSideCornerAuto extends Robot {
                 }
                 telemetry.addData("Left Jewel Color", jewelColor);
                 if (jewelColor == "BLUE") {
-                    jewelTurn.setPosition(jewelTurnBack  + .35);
-                } else if (jewelColor == "RED") {
                     jewelTurn.setPosition(jewelTurnFront);
+                } else if (jewelColor == "RED") {
+                    jewelTurn.setPosition(jewelTurnBack);
                 }
                 if (System.currentTimeMillis() - startTime > 1000) {
                     robotState = RobotState.LiftArm;
@@ -314,25 +312,25 @@ public class BlueSideCornerAuto extends Robot {
                     leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
                     if (columnKey == "CENTER") {
-                        leftBack.setTargetPosition(117);
-                        leftFront.setTargetPosition(117);
-                        rightBack.setTargetPosition(-117);
-                        rightFront.setTargetPosition(-117);
+                        leftBack.setTargetPosition(-110);
+                        leftFront.setTargetPosition(-110);
+                        rightBack.setTargetPosition(110);
+                        rightFront.setTargetPosition(110);
                     } else if (columnKey == "LEFT") {
-                        leftBack.setTargetPosition(55);
-                        leftFront.setTargetPosition(55);
-                        rightBack.setTargetPosition(-55);
-                        rightFront.setTargetPosition(-55);
+                        leftBack.setTargetPosition(-162);
+                        leftFront.setTargetPosition(-162);
+                        rightBack.setTargetPosition(162);
+                        rightFront.setTargetPosition(162);
                     } else if (columnKey =="RIGHT") {
-                        leftBack.setTargetPosition(165);
-                        leftFront.setTargetPosition(165);
-                        rightBack.setTargetPosition(-165);
-                        rightFront.setTargetPosition(-165);
+                        leftBack.setTargetPosition(-55);
+                        leftFront.setTargetPosition(-55);
+                        rightBack.setTargetPosition(55);
+                        rightFront.setTargetPosition(55);
                     } else {
-                        leftBack.setTargetPosition(250);
-                        leftFront.setTargetPosition(250);
-                        rightBack.setTargetPosition(-250);
-                        rightFront.setTargetPosition(-250);
+                        leftBack.setTargetPosition(-250);
+                        leftFront.setTargetPosition(-250);
+                        rightBack.setTargetPosition(250);
+                        rightFront.setTargetPosition(250);
                     }
 
                     leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -340,12 +338,12 @@ public class BlueSideCornerAuto extends Robot {
                     rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    leftBack.setPower(.4);
-                    leftFront.setPower(.4);
-                    rightBack.setPower(.4);
-                    rightFront.setPower(.4);
+                    leftBack.setPower(.2);
+                    leftFront.setPower(.2);
+                    rightBack.setPower(.2);
+                    rightFront.setPower(.2);
                 }
-                if ((leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) && (System.currentTimeMillis() - startTime < 2000)) {
+                if (leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) {
                     break;
                 } else {
                     robotState = RobotState.DriveForward;
@@ -361,37 +359,51 @@ public class BlueSideCornerAuto extends Robot {
                     rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+
                     if (columnKey == "CENTER") {
-                        leftBack.setTargetPosition(-1400);
-                        leftFront.setTargetPosition(-1400);
-                        rightBack.setTargetPosition(-1400);
-                        rightFront.setTargetPosition(-1400);
+                        leftBack.setTargetPosition(1400);
+                        leftFront.setTargetPosition(1400);
+                        rightBack.setTargetPosition(1400);
+                        rightFront.setTargetPosition(1400);
                     } else if (columnKey == "LEFT") {
-                        leftBack.setTargetPosition(-1385);
-                        leftFront.setTargetPosition(-1385);
-                        rightBack.setTargetPosition(-1385);
-                        rightFront.setTargetPosition(-1385);
+                        leftBack.setTargetPosition(1465);
+                        leftFront.setTargetPosition(1465);
+                        rightBack.setTargetPosition(1465);
+                        rightFront.setTargetPosition(1465);
                     } else if (columnKey =="RIGHT") {
-                        leftBack.setTargetPosition(-1480);
-                        leftFront.setTargetPosition(-1480);
-                        rightBack.setTargetPosition(-1480);
-                        rightFront.setTargetPosition(-1480);
+                        leftBack.setTargetPosition(1375);
+                        leftFront.setTargetPosition(1375);
+                        rightBack.setTargetPosition(1375);
+                        rightFront.setTargetPosition(1375);
                     }
+
 
                     leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    leftBack.setPower(.4);
-                    leftFront.setPower(.4);
-                    rightBack.setPower(.4);
-                    rightFront.setPower(.4);
+                    leftBack.setPower(.2);
+                    leftFront.setPower(.2);
+                    rightBack.setPower(.2);
+                    rightFront.setPower(.2);
                 }
-                if ((leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) && (System.currentTimeMillis() - startTime < 2000)) {
+                if (leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) {
                     break;
                 } else {
-                    robotState = RobotState.LiftFlipper;
+                    robotState =RobotState.OuttakeGlyph;
+                    resetPosition = true;
+                }
+                break;
+            case OuttakeGlyph:
+                if(resetPosition){
+                    startTime=System.currentTimeMillis();
+                    resetPosition=false;
+                }
+                intakeLeft.setPower(-1);
+                intakeRight.setPower(-1);
+                if (System.currentTimeMillis() - startTime > 500) {
+                    robotState = RobotState.DriveToCrypto;
                     resetPosition = true;
                 }
                 break;
@@ -414,14 +426,16 @@ public class BlueSideCornerAuto extends Robot {
                     rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    leftBack.setPower(.4);
-                    leftFront.setPower(.4);
-                    rightBack.setPower(.4);
-                    rightFront.setPower(.4);
+                    leftBack.setPower(.2);
+                    leftFront.setPower(.2);
+                    rightBack.setPower(.2);
+                    rightFront.setPower(.2);
                 }
                 if (leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) {
                     break;
                 } else {
+                    intakeLeft.setPower(0);
+                    intakeRight.setPower(0);
                     robotState = RobotState.DriveAwayFromCrypto;
                     resetPosition = true;
                 }
@@ -457,15 +471,15 @@ public class BlueSideCornerAuto extends Robot {
                     rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    leftBack.setPower(.4);
-                    leftFront.setPower(.4);
-                    rightBack.setPower(.4);
-                    rightFront.setPower(.4);
+                    leftBack.setPower(.2);
+                    leftFront.setPower(.2);
+                    rightBack.setPower(.2);
+                    rightFront.setPower(.2);
                 }
-                if ((leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) && (System.currentTimeMillis() - startTime < 2000)) {
+                if (leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) {
                     break;
                 } else {
-                    robotState = RobotState.LowerFlipper;
+                    robotState = RobotState.NudgeGlyph;
                     resetPosition = true;
                 }
                 break;
@@ -490,33 +504,39 @@ public class BlueSideCornerAuto extends Robot {
                     rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                    leftBack.setTargetPosition(-350);
-                    leftFront.setTargetPosition(-350);
-                    rightBack.setTargetPosition(-350);
-                    rightFront.setTargetPosition(-350);
+                    leftBack.setTargetPosition(-400);
+                    leftFront.setTargetPosition(-400);
+                    rightBack.setTargetPosition(-400);
+                    rightFront.setTargetPosition(-400);
 
                     leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    leftBack.setPower(.4);
-                    leftFront.setPower(.4);
-                    rightBack.setPower(.4);
-                    rightFront.setPower(.4);
+                    leftBack.setPower(.2);
+                    leftFront.setPower(.2);
+                    rightBack.setPower(.2);
+                    rightFront.setPower(.2);
                 }
-                if ((leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) && (System.currentTimeMillis() - startTime < 2000)) {
-                    intakeLeft.setPower(-1);
-                    intakeRight.setPower(-1);
+                if (leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) {
+//                    intakeLeft.setPower(-1);
+//                    intakeRight.setPower(-1);
                     break;
                 } else {
                     intakeLeft.setPower(0);
                     intakeRight.setPower(0);
-                    robotState = RobotState.TurnLeft;
-                    resetPosition = true;
+                    if (version == 1) {
+                        robotState = RobotState.DriveAwayFromCrypto2;
+                        resetPosition = true;
+                    }
+                    else if (version ==2) {
+                        robotState = RobotState.Done;
+                        resetPosition = true;
+                    }
                 }
                 break;
-            case TurnLeft:
+            case DriveAwayFromCrypto2:
                 if (resetPosition) {
                     startTime = System.currentTimeMillis();
                     resetPosition = false;
@@ -525,29 +545,29 @@ public class BlueSideCornerAuto extends Robot {
                     rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                    leftBack.setTargetPosition(-190);
-                    leftFront.setTargetPosition(-190);
-                    rightBack.setTargetPosition(190);
-                    rightFront.setTargetPosition(190);
+                    leftBack.setTargetPosition(400);
+                    leftFront.setTargetPosition(400);
+                    rightBack.setTargetPosition(400);
+                    rightFront.setTargetPosition(400);
 
                     leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    leftBack.setPower(.4);
-                    leftFront.setPower(.4);
-                    rightBack.setPower(.4);
-                    rightFront.setPower(.4);
+                    leftBack.setPower(.2);
+                    leftFront.setPower(.2);
+                    rightBack.setPower(.2);
+                    rightFront.setPower(.2);
                 }
-                if ((leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) && (System.currentTimeMillis() - startTime < 1500)) {
+                if (leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) {
                     break;
                 } else {
-                    robotState = RobotState.Park;
+                    robotState = RobotState.TurnToGlyphs;
                     resetPosition = true;
                 }
                 break;
-            case Park:
+            case TurnToGlyphs:
                 if (resetPosition) {
                     startTime = System.currentTimeMillis();
                     resetPosition = false;
@@ -556,29 +576,36 @@ public class BlueSideCornerAuto extends Robot {
                     rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                    leftBack.setTargetPosition(350);
-                    leftFront.setTargetPosition(350);
-                    rightBack.setTargetPosition(350);
-                    rightFront.setTargetPosition(350);
+                    leftBack.setTargetPosition(-200);
+                    leftFront.setTargetPosition(-200);
+                    rightBack.setTargetPosition(200);
+                    rightFront.setTargetPosition(200);
+
 
                     leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    leftBack.setPower(.4);
-                    leftFront.setPower(.4);
-                    rightBack.setPower(.4);
-                    rightFront.setPower(.4);
-                }
-                if ((leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) && (System.currentTimeMillis() - startTime < 2000)) {
+                    leftBack.setPower(.5);
+                    leftFront.setPower(.5);
+                    rightBack.setPower(.5);
+                    rightFront.setPower(.5);
+
+                    if (!leftBack.isBusy() || !leftFront.isBusy() || !rightBack.isBusy() || !rightFront.isBusy()) {
+                        break;
+                    } else {
+                        intakeLeft.setPower(0);
+                        intakeRight.setPower(0);
+                        robotState = RobotState.DriveToGlyphs;
+                        resetPosition = true;
+                    }
                     break;
-                } else {
-                    robotState = RobotState.Done;
-                    resetPosition = true;
                 }
                 break;
-            case IntakeAgain:
+
+            //case
+/*            case IntakeAgain:
                 if (resetPosition) {
                     startTime = System.currentTimeMillis();
                     resetPosition = false;
@@ -609,6 +636,40 @@ public class BlueSideCornerAuto extends Robot {
                 } else {
                     intakeLeft.setPower(0);
                     intakeRight.setPower(0);
+                    robotState = RobotState.TurnToGlyphs;
+                    resetPosition = true;
+                }
+                break;*/
+
+
+
+            case Park:
+                if (resetPosition) {
+                    startTime = System.currentTimeMillis();
+                    resetPosition = false;
+                    leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                    leftBack.setTargetPosition(350);
+                    leftFront.setTargetPosition(350);
+                    rightBack.setTargetPosition(350);
+                    rightFront.setTargetPosition(350);
+
+                    leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    leftBack.setPower(.2);
+                    leftFront.setPower(.2);
+                    rightBack.setPower(.2);
+                    rightFront.setPower(.2);
+                }
+                if (leftBack.isBusy() || leftFront.isBusy() || rightBack.isBusy() || rightFront.isBusy()) {
+                    break;
+                } else {
                     robotState = RobotState.Done;
                     resetPosition = true;
                 }
@@ -634,4 +695,5 @@ public class BlueSideCornerAuto extends Robot {
     public void stop() {
         super.stop();
     }
+
 }

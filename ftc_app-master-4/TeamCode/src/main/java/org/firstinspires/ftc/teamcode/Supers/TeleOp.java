@@ -15,6 +15,11 @@ public class TeleOp extends Robot{
 
     @Override
     public void loop(){
+        if(!armLifted) {
+            jewelArm.setPosition(jewelArmUp);
+            armLifted = true;
+        }
+
         drivePower = gamepad1.left_stick_y;
         driveTurn = gamepad1.right_stick_x;
 
